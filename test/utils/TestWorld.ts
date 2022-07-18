@@ -83,11 +83,14 @@ export async function initializeWorld({
   return {
     // If any "admin only" contract state needs to be changed, use `contracts`
     // to call methods with deployer privileges. e.g. `world.contracts.core.pause()`
+    // @ts-ignore
     contract,
     user1,
     user2,
     deployer,
+    // @ts-ignore
     user1Core: contract.connect(user1),
+    // @ts-ignore
     user2Core: contract.connect(user2),
   };
 }
