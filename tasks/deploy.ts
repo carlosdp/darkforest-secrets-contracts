@@ -245,6 +245,7 @@ export async function deployAndCut(
   // Dark Forest facets
   const coreFacet = await deployCoreFacet({}, libraries, hre);
   const moveFacet = await deployMoveFacet({}, libraries, hre);
+  const treasureFacet = await deployTreasureFacet({}, libraries, hre);
   const captureFacet = await deployCaptureFacet({}, libraries, hre);
   const artifactFacet = await deployArtifactFacet(
     { diamondAddress: diamond.address },
@@ -260,6 +261,7 @@ export async function deployAndCut(
   const darkForestFacetCuts = [
     ...changes.getFacetCuts('DFCoreFacet', coreFacet),
     ...changes.getFacetCuts('DFMoveFacet', moveFacet),
+    ...changes.getFacetCuts('DFTreasureFacet', treasureFacet),
     ...changes.getFacetCuts('DFCaptureFacet', captureFacet),
     ...changes.getFacetCuts('DFArtifactFacet', artifactFacet),
     ...changes.getFacetCuts('DFGetterFacet', getterFacet),
@@ -456,6 +458,22 @@ export async function deployMoveFacet(
   const contract = await factory.deploy();
   await contract.deployTransaction.wait();
   console.log(`DFMoveFacet deployed to: ${contract.address}`);
+  return contract;
+}
+
+export async function deployTreasureFacet(
+  {},
+  { Verifier, LibGameUtils, LibArtifactUtils, LibPlanet }: Libraries,
+  hre: HardhatRuntimeEnvironment
+) {
+  const factory = await hre.ethers.getContractFactory('DFTreasureFacet', {
+    libraries: {
+      Verifier,
+    },
+  });
+  const contract = await factory.deploy();
+  await contract.deployTransaction.wait();
+  console.log(`DFTreasureFacet deployed to: ${contract.address}`);
   return contract;
 }
 
