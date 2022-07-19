@@ -20,7 +20,7 @@ import * as path from 'path';
 import * as settings from './settings';
 import { decodeContracts, decodeInitializers, decodeAdminPlanets } from '@darkforest_eth/settings';
 import './tasks/artifact';
-import './tasks/circom';
+// import './tasks/circom';
 import './tasks/compile';
 import './tasks/debug';
 import './tasks/deploy';
@@ -145,7 +145,7 @@ const config: HardhatUserConfig = {
   circom: {
     inputBasePath: 'circuits/',
     outputBasePath: packageDirs['@darkforest_eth/snarks'],
-    ptau: 'pot15_final.ptau',
+    ptau: 'https://hermezptau.blob.core.windows.net/ptau/powersOfTau28_hez_final_15.ptau',
     circuits: [
       // {
       //   name: 'init',

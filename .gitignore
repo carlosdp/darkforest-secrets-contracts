@@ -1,4 +1,5 @@
 node_modules/*
+circuits/node_modules/*
 build/*
 yarn-error.log
 .gitkeep
@@ -23,3 +24,5 @@ tsconfig.ref.tsbuildinfo
 
 # Local development version of darkforest.toml
 darkforest.localhost.toml
+
+*.ptau
