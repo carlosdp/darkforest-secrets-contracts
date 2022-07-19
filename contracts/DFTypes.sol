@@ -238,3 +238,8 @@ enum Biome {
     Lava,
     Corrupted
 }
+
+struct Treasure {
+  address owner;
+  bool used;
+}

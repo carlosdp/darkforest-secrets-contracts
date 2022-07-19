@@ -12,7 +12,8 @@ import {
     RevealedCoords,
     Player,
     ArrivalData,
-    Artifact
+    Artifact,
+    Treasure
 } from "../DFTypes.sol";
 
 struct WhitelistStorage {
@@ -62,6 +63,8 @@ struct GameStorage {
     mapping(uint256 => uint256[]) planetArtifacts;
     // Artifact stuff
     mapping(uint256 => Artifact) artifacts;
+    // Treasure claims
+    mapping(uint256 => Treasure) treasures;
     // Capture Zones
     uint256 nextChangeBlock;
 }

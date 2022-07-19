@@ -24,10 +24,11 @@ import {
     PlanetExtendedInfo2,
     PlanetEventMetadata,
     PlanetEventType,
-    Upgrade
+    Upgrade,
+    Treasure
 } from "../DFTypes.sol";
 
-contract DFMoveFacet is WithStorage {
+contract DFTreasureFacet is WithStorage {
     modifier notPaused() {
         require(!gs().paused, "Game is paused");
         _;
@@ -41,6 +42,33 @@ contract DFMoveFacet is WithStorage {
         uint256 artifactId,
         uint256 abandoning
     );
+
+    function claimTreasure(
+        uint256[2] memory _a,
+        uint256[2][2] memory _b,
+        uint256[2] memory _c,
+        uint256 _nonceHash
+    ) public notPaused {
+      // construct treasure from input
+      Treasure memory treasure = Treasure({
+        owner: msg.sender,
+        used: false
+      });
+
+      // verify proof of treasure claim
+      if (!snarkConstants().DISABLE_ZK_CHECKS) {
+          // todo: replace with proper inputs
+          uint256[2] memory _proofInput =
+              [
+                  _nonceHash,
+                  msg.sender
+              ];
+          require(Verifier.verifyTreasureClaimProof(_a, _b, _c, _proofInput), "Failed treasure claim proof check");
+      }
+
+      // claim treasure for msg.sender
+      gs().treasures[_nonceHash] = treasure;
+    }
 
     function move(
         uint256[2] memory _a,
