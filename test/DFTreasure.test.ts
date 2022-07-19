@@ -24,6 +24,7 @@ import {
   SMALL_INTERVAL,
   SPAWN_PLANET_1,
   SPAWN_PLANET_2,
+  initializers,
 } from './utils/WorldConstants';
 
 const { BigNumber: BN } = ethers;
@@ -58,15 +59,16 @@ describe('DarkForestTreasure', function () {
       const shipId = ship.id;
       // note(carlos): trust me bro
       // @ts-ignore
-      await world.user1Core.claimTrasure(
+      await world.user1Core.claimTreasure(
         [0, 0],
         [
           [0, 0],
           [0, 0],
         ],
         [0, 0],
-        SPAWN_PLANET_1,
-        0
+        SPAWN_PLANET_1.id,
+        0,
+        initializers.PLANETHASH_KEY,
       );
 
       await increaseBlockchainTime();
