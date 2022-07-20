@@ -38,9 +38,7 @@ contract DFTreasureFacet is WithStorage {
         uint256[2] memory _a,
         uint256[2][2] memory _b,
         uint256[2] memory _c,
-        uint256 _planetHash,
-        uint256 _nonceHash,
-        uint256 _planetHashKey
+        uint256[4] memory _input
     ) public notPaused {
       // construct treasure from input
       Treasure memory treasure = Treasure({
@@ -52,16 +50,21 @@ contract DFTreasureFacet is WithStorage {
       /* if (!snarkConstants().DISABLE_ZK_CHECKS) { */
           uint256[4] memory _proofInput =
               [
-                  _planetHash,
-                  _nonceHash,
-                  _planetHashKey,
+                  _input[0], // planetHash
+                  _input[1], // nonceHash
+                  _input[2], // planetHashKey
                   0 //keccak256(abi.encode(msg.sender))
               ];
           require(TreasureClaimVerifier.verifyProof(_a, _b, _c, _proofInput), "Failed treasure claim proof check");
       /* } */
 
+      require(
+          gs().planets[_input[0]].owner == msg.sender,
+          "Only owner account can perform that operation on planet."
+      );
+
       // claim treasure for msg.sender
-      gs().treasures[_nonceHash] = treasure;
+      gs().treasures[_input[1]] = treasure;
 
       // todo: mark planet "treasure hunted"
     }
