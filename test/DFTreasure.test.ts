@@ -1,7 +1,7 @@
-import { ArtifactType } from '@darkforest_eth/types';
-import { expect } from 'chai';
-import { BigNumber } from 'ethers';
-import { ethers } from 'hardhat';
+import { ArtifactType } from "@darkforest_eth/types";
+import { expect } from "chai";
+import { BigNumber } from "ethers";
+import { ethers } from "hardhat";
 import {
   conquerUnownedPlanet,
   createArtifactOnPlanet,
@@ -10,8 +10,12 @@ import {
   makeInitArgs,
   makeMoveArgs,
   ZERO_ADDRESS,
-} from './utils/TestUtils';
-import { defaultWorldFixture, growingWorldFixture, World } from './utils/TestWorld';
+} from "./utils/TestUtils";
+import {
+  defaultWorldFixture,
+  growingWorldFixture,
+  World,
+} from "./utils/TestWorld";
 import {
   LVL0_PLANET_OUT_OF_BOUNDS,
   LVL1_ASTEROID_1,
@@ -25,12 +29,12 @@ import {
   SPAWN_PLANET_1,
   SPAWN_PLANET_2,
   initializers,
-} from './utils/WorldConstants';
+} from "./utils/WorldConstants";
 
 const { BigNumber: BN } = ethers;
 
-describe('DarkForestTreasure', function () {
-  describe('claiming treasure', function () {
+describe("DarkForestTreasure", function () {
+  describe("claiming treasure", function () {
     let world: World;
 
     async function worldFixture() {
@@ -51,33 +55,50 @@ describe('DarkForestTreasure', function () {
       world = await fixtureLoader(worldFixture);
     });
 
-    it('allows claiming a treasure from owned planet', async function () {
-      await conquerUnownedPlanet(world, world.user1Core, SPAWN_PLANET_1, LVL1_ASTEROID_NEBULA);
+    it("allows claiming a treasure from owned planet", async function () {
+      await conquerUnownedPlanet(
+        world,
+        world.user1Core,
+        SPAWN_PLANET_1,
+        LVL1_ASTEROID_NEBULA
+      );
       await increaseBlockchainTime();
 
-      const ship = (await world.user1Core.getArtifactsOnPlanet(SPAWN_PLANET_1.id))[0].artifact;
+      const ship = (
+        await world.user1Core.getArtifactsOnPlanet(SPAWN_PLANET_1.id)
+      )[0].artifact;
       const shipId = ship.id;
-      // note(carlos): trust me bro
+      // ,note(carlos): trust me bro
       // @ts-ignore
       await world.user1Core.claimTreasure(
-        ["3846203574711277120509179237998948575813693308718783633084072856135074059660", "9848328668392802605051757250739764838749703513964622766750485099881164177831"],
         [
-          ["18660143780475138130744179134495907336825118449734341992668275454449204638436", "18891998562295867919824383050981508195973606328844438318482642587709044563689"],
-          ["1238241857631130597747529503971951960798264444065519405589916324623590269818", "8878936299000373815880939909655528811674595462166407977760942182170592674992"],
+          "0x16a1e3448e72cd2978e37e4c1655d6e278b03c94370a91bfc9f9b0a681fd9327",
+          "0x21501c3ab1117f7b548daacf429a1c74a9b488450c63a16c754d7b57646ce74c",
         ],
-        ["12424497389376060281092732888103146995500785786196982078671792922389692367183", "12395745038266699010282682679156668010796406604436360369516632294799899787490"],
-        "18498248453363282373684781534845401002600701788145870120983744267517012766537",//SPAWN_PLANET_1.id,
-        "407476154482410882571835758776556304528263090013393128863650917112091016257",
-        7, //initializers.PLANETHASH_KEY,
+        [
+          [
+            "0x06591d0a1d5659c51ba0bc613526166e953fe037f1baf514db43e00a57437adc",
+            "0x086e76f4ef97275a479685b21e1f50c16cb231e298dc85969203fc1d6f18f1c6",
+          ],
+          [
+            "0x2f5ac45210c61b2ab100e7809a677160e322c8dc92089e0a1e1301fa60a3c851",
+            "0x28b320614dc39ba22b44a2d015595f51f531d8187181b4815f315a9725487cd6",
+          ],
+        ],
+        [
+          "0x0277785029a4476905e4ac55e518af775a3276f05b5e06da0fec7a39c6ae4716",
+          "0x2f85d209af6fdaf9c3a6be8872293c42d97d6c39b88d952fb12707602a6cba6b",
+        ],
+        "0x28e5a33966ceb6264312abed79feb15274222340314d3b6137009bf4b3646f49",
+        "0x00e69f9295ab5ef754791b9506726aa92c5d8f3da530357b51a390bf37847c41",
+        "0x0000000000000000000000000000000000000000000000000000000000000007"
       );
 
       await increaseBlockchainTime();
       await world.user1Core.refreshPlanet(SPAWN_PLANET_1.id);
 
       // @ts-ignore
-      expect(await world.user1Core.isTreasureClaimed(0)).to.be.eq(
-        true
-      );
+      expect(await world.user1Core.isTreasureClaimed(0)).to.be.eq(true);
     });
   });
 });

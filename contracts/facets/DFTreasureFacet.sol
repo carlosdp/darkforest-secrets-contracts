@@ -6,7 +6,7 @@ import {ABDKMath64x64} from "../vendor/libraries/ABDKMath64x64.sol";
 import {LibGameUtils} from "../libraries/LibGameUtils.sol";
 import {LibArtifactUtils} from "../libraries/LibArtifactUtils.sol";
 import {LibPlanet} from "../libraries/LibPlanet.sol";
-import {Verifier} from "../Verifier.sol";
+import {TreasureClaimVerifier} from "../TreasureClaimVerifier.sol";
 
 // Storage imports
 import {WithStorage} from "../libraries/LibStorage.sol";
@@ -57,7 +57,7 @@ contract DFTreasureFacet is WithStorage {
                   _planetHashKey,
                   0 //keccak256(abi.encode(msg.sender))
               ];
-          require(Verifier.verifyTreasureClaimProof(_a, _b, _c, _proofInput), "Failed treasure claim proof check");
+          require(TreasureClaimVerifier.verifyProof(_a, _b, _c, _proofInput), "Failed treasure claim proof check");
       /* } */
 
       // claim treasure for msg.sender
