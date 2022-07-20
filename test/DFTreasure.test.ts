@@ -84,5 +84,43 @@ describe("DarkForestTreasure", function () {
       // @ts-ignore
       expect(await world.user1Core.isTreasureClaimed(publicSignals[1])).to.be.eq(true);
     });
+
+    it("allows using a treasure after it is claimed", async function () {
+      const { proof, publicSignals } = await snarkjs.groth16.fullProve({
+        x: 0,
+        y: 0,
+        privkey: "88549154299169935420064281163296845505587953610183896504176354567359434168161",
+        pubkey: "",
+        PLANETHASH_KEY: 1
+      }, "./artifacts/circom/treasure_claim.wasm", "./artifacts/circom/treasure_claim.zkey");
+      const callArgs = buildContractCallArgs(proof, publicSignals);
+
+      const planet = new TestLocation({ hex: BigNumber.from(publicSignals[0]).toHexString().slice(2), perlin: VALID_INIT_PERLIN, distFromOrigin: 0 });
+
+      await world.user1Core.initializePlayer(...makeInitArgs(planet));
+
+      // @ts-ignore
+      await world.user1Core.claimTreasure(...callArgs);
+
+      await increaseBlockchainTime();
+
+      // @ts-ignore
+      expect(await world.user1Core.isTreasureClaimed(publicSignals[1])).to.be.eq(true);
+
+      const { proof: useProof, publicSignals: useSignals } = await snarkjs.groth16.fullProve({
+        x1: 0,
+        y1: 0,
+        x2: 0,
+        y2: 0,
+        nonce: "8639973713914984096929373259456963459323475199396817703446838736579216571875",
+        r: 5000,
+        distMax: 53,
+        PLANETHASH_KEY: 1
+      }, "./artifacts/circom/treasure_use.wasm", "./artifacts/circom/treasure_use.zkey");
+      const callArgs2 = buildContractCallArgs(useProof, useSignals);
+
+      // @ts-ignore
+      await world.user1Core.useTreasure(...callArgs2);
+    });
   });
 });

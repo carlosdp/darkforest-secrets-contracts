@@ -26,8 +26,10 @@ template Main() {
     signal input PLANETHASH_KEY;
     signal input pubkey;
     
+    // intermediate signal
     signal nonce;
     
+    // public outputs
     signal output planetHash;
     signal output nonceHash;
 

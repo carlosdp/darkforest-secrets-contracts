@@ -183,6 +183,12 @@ const config: HardhatUserConfig = {
         input: 'treasure_claim/input.json',
         beacon: '0000000005060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f',
       },
+      {
+        name: 'treasure_use',
+        circuit: 'treasure_use/circuit.circom',
+        input: 'treasure_use/input.json',
+        beacon: '0000000005060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f',
+      },
     ],
   },
   typechain: {

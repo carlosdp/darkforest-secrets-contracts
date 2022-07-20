@@ -393,6 +393,10 @@ export async function deployLibraries({}, hre: HardhatRuntimeEnvironment) {
   const TreasureClaimVerifier = await TreasureClaimVerifierFactory.deploy();
   await TreasureClaimVerifier.deployTransaction.wait();
 
+  const TreasureUseVerifierFactory = await hre.ethers.getContractFactory('TreasureUseVerifier');
+  const TreasureUseVerifier = await TreasureUseVerifierFactory.deploy();
+  await TreasureUseVerifier.deployTransaction.wait();
+
   const LibGameUtilsFactory = await hre.ethers.getContractFactory('LibGameUtils');
   const LibGameUtils = await LibGameUtilsFactory.deploy();
   await LibGameUtils.deployTransaction.wait();
@@ -425,6 +429,7 @@ export async function deployLibraries({}, hre: HardhatRuntimeEnvironment) {
     LibPlanet: LibPlanet.address,
     Verifier: Verifier.address,
     TreasureClaimVerifier: TreasureClaimVerifier.address,
+    TreasureUseVerifier: TreasureUseVerifier.address,
     LibArtifactUtils: LibArtifactUtils.address,
   };
 }
@@ -468,12 +473,13 @@ export async function deployMoveFacet(
 
 export async function deployTreasureFacet(
   {},
-  { TreasureClaimVerifier }: Libraries,
+  { TreasureClaimVerifier, TreasureUseVerifier }: Libraries,
   hre: HardhatRuntimeEnvironment
 ) {
   const factory = await hre.ethers.getContractFactory('DFTreasureFacet', {
     libraries: {
       TreasureClaimVerifier,
+      TreasureUseVerifier,
     },
   });
   const contract = await factory.deploy();
