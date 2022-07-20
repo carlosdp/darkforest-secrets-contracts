@@ -98,7 +98,7 @@ describe("DarkForestTreasure", function () {
       await world.user1Core.refreshPlanet(SPAWN_PLANET_1.id);
 
       // @ts-ignore
-      expect(await world.user1Core.isTreasureClaimed(0)).to.be.eq(true);
+      expect(await world.user1Core.isTreasureClaimed("0x00e69f9295ab5ef754791b9506726aa92c5d8f3da530357b51a390bf37847c41")).to.be.eq(true);
     });
   });
 });
