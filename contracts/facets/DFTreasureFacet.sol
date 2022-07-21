@@ -45,16 +45,18 @@ contract DFTreasureFacet is WithStorage {
       });
 
       // verify proof of treasure claim
-      /* if (!snarkConstants().DISABLE_ZK_CHECKS) { */
-          uint256[4] memory _proofInput =
-              [
-                  _input[0], // planetHash
-                  _input[1], // nonceHash
-                  _input[2], // planetHashKey
-                  0 //keccak256(abi.encode(msg.sender))
-              ];
-          require(TreasureClaimVerifier.verifyProof(_a, _b, _c, _proofInput), "Failed treasure claim proof check");
-      /* } */
+      uint256[4] memory _proofInput =
+          [
+              _input[0], // planetHash
+              _input[1], // nonceHash
+              _input[2], // pubkey
+              _input[3]  // planetHashKey
+          ];
+      uint256 pubkey = _input[2];
+      require(TreasureClaimVerifier.verifyProof(_a, _b, _c, _proofInput), "Failed treasure claim proof check");
+      
+      // TODO: verify pubkey in proof input == msg.sender
+      // require(address(uint160(pubkey)) == msg.sender);
 
       require(
           gs().planets[_input[0]].owner == msg.sender,

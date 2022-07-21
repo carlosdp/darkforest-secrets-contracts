@@ -145,7 +145,7 @@ const config: HardhatUserConfig = {
   circom: {
     inputBasePath: 'circuits/',
     outputBasePath: packageDirs['@darkforest_eth/snarks'],
-    ptau: 'https://hermezptau.blob.core.windows.net/ptau/powersOfTau28_hez_final_15.ptau',
+    ptau: 'https://hermezptau.blob.core.windows.net/ptau/powersOfTau28_hez_final_20.ptau',
     circuits: [
       // {
       //   name: 'init',
