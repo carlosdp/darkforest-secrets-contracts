@@ -55,12 +55,11 @@ contract DFTreasureFacet is WithStorage {
       uint256 pubkey = _input[2];
       require(TreasureClaimVerifier.verifyProof(_a, _b, _c, _proofInput), "Failed treasure claim proof check");
       
-      // TODO: verify pubkey in proof input == msg.sender
-      // require(address(uint160(pubkey)) == msg.sender);
+      require(pubkey == uint256(uint160(msg.sender)), "Pubkey in proof input does not match msg.sender");
 
       require(
           gs().planets[_input[0]].owner == msg.sender,
-          "Only owner account can perform that operation on planet."
+          "Only owner account can claim treasure on planet."
       );
 
       // claim treasure for msg.sender
@@ -93,10 +92,6 @@ contract DFTreasureFacet is WithStorage {
       uint256 _planetHash = _input[0];
       require(isTreasureClaimed(_nonceHash), "Treasure doesn't exist");
       require(!gs().treasures[_nonceHash].used, "Treasure already used");
-      require(
-          gs().planets[_planetHash].owner == msg.sender,
-          "Only owner account can perform that operation on planet."
-      );
       
       // TODO: apply treasure conditions
 

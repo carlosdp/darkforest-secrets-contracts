@@ -38,6 +38,23 @@ import { buildContractCallArgs } from "@darkforest_eth/snarks";
 
 const { BigNumber: BN } = ethers;
 
+// https://github.com/0xPARC/circom-ecdsa/blob/master/test/ecdsa.test.ts
+function bigint_to_tuple(x: bigint) {
+  let mod: bigint = 2n ** 64n;
+  let ret: [bigint, bigint, bigint, bigint] = [0n, 0n, 0n, 0n];
+
+  var x_temp: bigint = x;
+  for (var idx = 0; idx < ret.length; idx++) {
+    ret[idx] = x_temp % mod;
+    x_temp = x_temp / mod;
+  }
+  return ret;
+}
+
+// '0x523170AAE57904F24FFE1F61B7E4FF9E9A0CE7557987C2FC034EACB1C267B4AE'
+const USER1_PRIVKEY =
+  37177006692950057891245894206975385815459129981265895102836668557466070922414n;
+
 describe("DarkForestTreasure", function () {
   this.timeout(1000 * 1000);
   describe("claiming treasure", function () {
@@ -60,13 +77,19 @@ describe("DarkForestTreasure", function () {
     beforeEach(async function () {
       world = await fixtureLoader(worldFixture);
     });
-    
+
     const generateClaimProofArgs = async () => {
       const { proof, publicSignals } = await snarkjs.groth16.fullProve(
         {
           x: 0,
           y: 0,
-          privkey: ["7", "1", "0", "0"],
+          privkey: bigint_to_tuple(USER1_PRIVKEY),
+          // privkey: [
+          //   "238317709767980206",
+          //   "11100501535858606844",
+          //   "5764079077638340510",
+          //   "5922638864265577714"
+          // ],
           PLANETHASH_KEY: 1,
         },
         "./artifacts/circom/treasure_claim.wasm",
@@ -74,29 +97,29 @@ describe("DarkForestTreasure", function () {
       );
       const callArgs = buildContractCallArgs(proof, publicSignals);
 
-      return {proof, publicSignals, callArgs}
-    }
+      return { publicSignals, callArgs };
+    };
 
     const generateUseProofArgs = async () => {
       const { proof, publicSignals } = await snarkjs.groth16.fullProve(
         {
-            x: 0,
-            y: 0,
-            nonce:
-            "1444183896910629182013318925431233511918984337616964411210224121376998532086",
-            r: 5000,
-            PLANETHASH_KEY: 1,
+          x: 0,
+          y: 0,
+          nonce:
+            "1624835883669056879191862222660505507327799630700954670267464969725378037543",
+          r: 5000,
+          PLANETHASH_KEY: 1,
         },
         "./artifacts/circom/treasure_use.wasm",
         "./artifacts/circom/treasure_use.zkey"
       );
       const callArgs = buildContractCallArgs(proof, publicSignals);
 
-      return {proof, publicSignals, callArgs}
-    }
+      return { publicSignals, callArgs };
+    };
 
     it("allows claiming a treasure from owned planet", async function () {
-      const {proof, publicSignals, callArgs} = await generateClaimProofArgs();
+      const { publicSignals, callArgs } = await generateClaimProofArgs();
 
       const planet = new TestLocation({
         hex: BigNumber.from(publicSignals[0]).toHexString().slice(2),
@@ -107,11 +130,13 @@ describe("DarkForestTreasure", function () {
       // await world.contract.createPlanet({ location: planet.id, perlin: BigNumber.from(0), level: BigNumber.from(1), planetType: BigNumber.from(0), requireValidLocationId: false });
       await world.user1Core.initializePlayer(...makeInitArgs(planet));
 
+      // other user shouldn't be able to claim with the same proof
+      // @ts-ignore
+      await expect(world.user2Core.claimTreasure(...callArgs)).to.be.reverted;
+
       // note(carlos): trust me bro
       // @ts-ignore
       await world.user1Core.claimTreasure(...callArgs);
-      // @ts-ignore
-      // expect(await world.user2Core.claimTreasure(...callArgs)).to.be.reverted();
 
       await increaseBlockchainTime();
 
@@ -122,7 +147,7 @@ describe("DarkForestTreasure", function () {
     });
 
     it("allows using a treasure after it is claimed", async function () {
-      const {proof, publicSignals, callArgs} = await generateClaimProofArgs();
+      const { publicSignals, callArgs } = await generateClaimProofArgs();
 
       const planet = new TestLocation({
         hex: BigNumber.from(publicSignals[0]).toHexString().slice(2),
@@ -137,7 +162,12 @@ describe("DarkForestTreasure", function () {
 
       await increaseBlockchainTime();
 
-      const { proof: useProof, publicSignals: useSignals, callArgs: useCallArgs } = await generateUseProofArgs();
+      const { publicSignals: useSignals, callArgs: useCallArgs } =
+        await generateUseProofArgs();
+
+      // other user shouldn't be able to use
+      // @ts-ignore
+      await expect(world.user2Core.claimTreasure(...callArgs)).to.be.reverted;
 
       // @ts-ignore
       await world.user1Core.useTreasure(...useCallArgs);
