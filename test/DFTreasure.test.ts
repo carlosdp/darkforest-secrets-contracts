@@ -108,13 +108,10 @@ describe("DarkForestTreasure", function () {
       expect(await world.user1Core.isTreasureClaimed(publicSignals[1])).to.be.eq(true);
 
       const { proof: useProof, publicSignals: useSignals } = await snarkjs.groth16.fullProve({
-        x1: 0,
-        y1: 0,
-        x2: 0,
-        y2: 0,
+        x: 0,
+        y: 0,
         nonce: "8639973713914984096929373259456963459323475199396817703446838736579216571875",
         r: 5000,
-        distMax: 53,
         PLANETHASH_KEY: 1
       }, "./artifacts/circom/treasure_use.wasm", "./artifacts/circom/treasure_use.zkey");
       const callArgs2 = buildContractCallArgs(useProof, useSignals);

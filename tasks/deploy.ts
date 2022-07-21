@@ -473,11 +473,12 @@ export async function deployMoveFacet(
 
 export async function deployTreasureFacet(
   {},
-  { TreasureClaimVerifier, TreasureUseVerifier }: Libraries,
+  { LibGameUtils, TreasureClaimVerifier, TreasureUseVerifier }: Libraries,
   hre: HardhatRuntimeEnvironment
 ) {
   const factory = await hre.ethers.getContractFactory('DFTreasureFacet', {
     libraries: {
+      LibGameUtils,
       TreasureClaimVerifier,
       TreasureUseVerifier,
     },

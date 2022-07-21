@@ -2,10 +2,7 @@
 pragma solidity ^0.8.0;
 
 // Library imports
-import {ABDKMath64x64} from "../vendor/libraries/ABDKMath64x64.sol";
 import {LibGameUtils} from "../libraries/LibGameUtils.sol";
-import {LibArtifactUtils} from "../libraries/LibArtifactUtils.sol";
-import {LibPlanet} from "../libraries/LibPlanet.sol";
 import {TreasureClaimVerifier} from "../TreasureClaimVerifier.sol";
 import {TreasureUseVerifier} from "../TreasureUseVerifier.sol";
 
@@ -74,34 +71,43 @@ contract DFTreasureFacet is WithStorage {
         uint256[2] memory _a,
         uint256[2][2] memory _b,
         uint256[2] memory _c,
-        uint256[10] memory _input
+        uint256[8] memory _input
     ) public notPaused {
       // verify proof of treasure use
-      uint256[10] memory _proofInput =
+      uint256[8] memory _proofInput =
           [
-            _input[0], // _pub1,
-            _input[1], // _pub2,
-            _input[2], // _nonceHash,
-            _input[3], // _effect0
-            _input[4], // _effect1
-            _input[5], // _effect2
-            _input[6], // _effect3
-            _input[7], // _r,
-            _input[8], // _distMax,
-            _input[9] // _planetHashKey
+            _input[0], // _planetHash,
+            _input[1], // _nonceHash,
+            _input[2], // _effect0
+            _input[3], // _effect1
+            _input[4], // _effect2
+            _input[5], // _effect3
+            _input[6], // _r,
+            _input[7] // _planetHashKey
           ];
       require(TreasureUseVerifier.verifyProof(_a, _b, _c, _proofInput), "Failed treasure claim proof check");
 
-      uint256 _nonceHash = _input[2];
-      uint256 _pub1 = _input[0];
+      uint256 _nonceHash = _input[1];
+      uint256 _planetHash = _input[0];
       require(isTreasureClaimed(_nonceHash), "Treasure doesn't exist");
       require(!gs().treasures[_nonceHash].used, "Treasure already used");
       require(
-          gs().planets[_pub1].owner == msg.sender,
+          gs().planets[_planetHash].owner == msg.sender,
           "Only owner account can perform that operation on planet."
       );
       
-      // TODO: apply treasure effects
+      // TODO: apply treasure conditions
+
+      // apply treasure effects
+      Upgrade memory debuff = Upgrade({
+          popCapMultiplier: 0,
+          popGroMultiplier: 0,
+          rangeMultiplier: 100,
+          speedMultiplier: 100,
+          defMultiplier: 100
+      });
+      // buff because we want to multiply not divide
+      LibGameUtils._buffPlanet(_planetHash, debuff);
       
       gs().treasures[_nonceHash].used = true;
     }
