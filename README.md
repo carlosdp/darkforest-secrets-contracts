@@ -1,4 +1,14 @@
-# Dark Forest Smart Contracts
+# Dark Forest Treasure Hunting
+
+0xPARC July '22 hack week!
+
+Adds a variant of artifacts called "Treasures". 
+
+Treasures:
+- **are private by design**. neither other players nor the game/lobby creator can know what exact treasure you have until use (only effects are revealed)
+- are hard to find - players can only hunt for 1 treasure per planet and are incentivized to explore
+- are powerful - they can have **any condition and effect** (in this implementation just an arbitrary buff/debuff to a target planet) within the constraints of the game
+
 
 ## Development Guide
 
