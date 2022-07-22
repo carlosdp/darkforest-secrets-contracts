@@ -12,7 +12,7 @@ WORLD_RADIUS_MIN = 12_000
 # SNARK keys & Perlin parameters #
 ##################################
 DISABLE_ZK_CHECKS = false
-PLANETHASH_KEY = 115
+PLANETHASH_KEY = 1
 SPACETYPE_KEY = 116
 BIOMEBASE_KEY = 117
 PERLIN_MIRROR_X = false
@@ -144,3 +144,10 @@ PLANET_TYPE_WEIGHTS = [
 ##########################
 # Planets to add to game #
 ##########################
+[[planets]]
+  x = 0
+  y = 0
+  level = 9
+  planetType = 0
+  requireValidLocationId = false
+  revealLocation = true
