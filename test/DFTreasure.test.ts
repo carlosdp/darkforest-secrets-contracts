@@ -6,6 +6,7 @@ import {
   conquerUnownedPlanet,
   createArtifactOnPlanet,
   fixtureLoader,
+  getStatSum,
   increaseBlockchainTime,
   makeInitArgs,
   makeMoveArgs,
@@ -168,9 +169,16 @@ describe("DarkForestTreasure", function () {
       // other user shouldn't be able to use
       // @ts-ignore
       await expect(world.user2Core.claimTreasure(...callArgs)).to.be.reverted;
+      
+      // target planet stats before use
+      const statSumBefore = getStatSum(await world.contract.planets(planet.id));
 
       // @ts-ignore
       await world.user1Core.useTreasure(...useCallArgs);
+
+      // target planet stats after use
+      const statSumAfter = getStatSum(await world.contract.planets(planet.id));
+      expect(statSumAfter).to.be.lt(statSumBefore);
     });
   });
 });
